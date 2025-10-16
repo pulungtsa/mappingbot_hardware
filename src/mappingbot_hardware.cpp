@@ -44,12 +44,12 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(
     // for (const hardware_interface::ComponentInfo & sensor : info_.sensors) {
     //     if (sensor.name["battVoltgae_"].empty()) {
     //         RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Motor id not defined for join %s", joint.name.c_str());
-    //         return hardware_interface::return_type::ERROR;
+    //         return hardware_interface::CallbackReturn::ERROR;
     //     }
 
     //     if (sensor.name["board_temperatures_"].empty()) {
     //         RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Motor id not defined for join %s", joint.name.c_str());
-    //         return hardware_interface::return_type::ERROR;
+    //         return hardware_interface::CallbackReturn::ERROR;
     //     }
     // }
 
@@ -58,28 +58,28 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(
         // DiffBotSystem has exactly two states and one command interface on each joint
         if (joint.parameters["motor_id"].empty()) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Motor id not defined for join %s", joint.name.c_str());
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
         if (joint.command_interfaces.size() != 1) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Invalid number of command interfaces (expected: 1)");
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
         if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Invalid joint command interface 0 type (expected: velocity)");
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
 
         if (joint.state_interfaces.size() != 2) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Invalid number of state interfaces (expected: 2)");
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
         if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Invalid joint state interface 0 type (expected: position)");
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
         if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY) {
             RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Invalid joint state interface 1 type (expected: velocity)");
-            return hardware_interface::return_type::ERROR;
+            return hardware_interface::CallbackReturn::ERROR;
         }
     }
     
@@ -90,9 +90,9 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(
 
     // serial_port_->open(cfg_.device);
     // serial_port_ = std::make_shared<MappingbotSerialPort>();
-    // if (serial_port_->open(cfg_.device) != return_type::SUCCESS) {
+    // if (serial_port_->open(cfg_.device) != CallbackReturn::SUCCESS) {
     //     RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware failed to open serial port");
-    //     return hardware_interface::return_type::ERROR;
+    //     return hardware_interface::CallbackReturn::ERROR;
     // }
 
     // vel_pub_[0]    = rclcpp::create_publisher<std_msgs::msg::Float64>("hoverboard/left_wheel/velocity", 10);
@@ -165,9 +165,9 @@ hardware_interface::CallbackReturn MappingbotHardware::on_activate(
     }
 
     serial_port_ = std::make_shared<MappingbotSerialPort>();
-    if (serial_port_->open(serial_port_name_) != return_type::SUCCESS) {
+    if (serial_port_->open(serial_port_name_) != CallbackReturn::SUCCESS) {
         RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware failed to open serial port");
-        return hardware_interface::return_type::ERROR;
+        return hardware_interface::CallbackReturn::ERROR;
     }
 
     // status_ = hardware_interface::status::STARTED;
@@ -200,15 +200,15 @@ hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type MappingbotHardware::read(
+hardware_interface::CallbackReturn MappingbotHardware::read(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
     // TODO : buat dua sistem, jika pake simulation gazebo dan jika pake robot real
-    // if (start() != hardware_interface::return_type::OK) {
-        return hardware_interface::return_type::ERROR;
-    }
+    // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
+        // return hardware_interface::CallbackReturn::ERROR;
+    
 
     serial_port_->read_frames();
 
@@ -227,15 +227,15 @@ hardware_interface::return_type MappingbotHardware::read(
     
     // fprintf(stderr, "velL : %f\n", velocity_states_[0]);
     // fprintf(stderr, "velR : %f\n", velocity_states_[1]);
-    return hardware_interface::return_type::OK;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type MappingbotHardware::write(
+hardware_interface::CallbackReturn MappingbotHardware::write(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
-    // if (start() != hardware_interface::return_type::OK) {
-        return hardware_interface::return_type::ERROR;
+    // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
+        return hardware_interface::CallbackReturn::ERROR;
     }
 
     // Convert PID outputs in RAD/S to RPM
@@ -262,7 +262,7 @@ hardware_interface::return_type MappingbotHardware::write(
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Kecepatan Kiri rpm: %f", set_cmd_left);
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Kecepatan Kanan rpm: %f", set_cmd_right);
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Motor successfully written!");
-    return hardware_interface::return_type::OK;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 void MappingbotHardware::on_encoder_update (int16_t right, int16_t left){
