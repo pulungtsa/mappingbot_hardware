@@ -27,7 +27,7 @@ namespace mappingbot_hardware
         RCLCPP_SHARED_PTR_DEFINITIONS(MappingbotHardware)
 
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type configure(const hardware_interface::HardwareInfo & system_info) override;
+        hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
         MAPPINGBOT_HARDWARE_PUBLIC
         virtual std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
@@ -36,10 +36,10 @@ namespace mappingbot_hardware
         virtual std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type start(const rclcpp_lifecycle::State & previous_state) override;
+        hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
 
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type stop(const rclcpp_lifecycle::State & previous_state) override;
+        hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
         // Humble requires read/write to accept time and period -> these are the real overrides
         MAPPINGBOT_HARDWARE_PUBLIC

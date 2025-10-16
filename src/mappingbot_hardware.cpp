@@ -19,11 +19,10 @@ PLUGINLIB_EXPORT_CLASS(
 
 using namespace mappingbot_hardware;
 
-hardware_interface::return_type MappingbotHardware::configure(const hardware_interface::HardwareInfo & system_info)
+hardware_interface::CallbackReturn MappingbotHardware::on_init(const hardware_interface::HardwareInfo & info)
 {
-
-    if (SystemInterface::configure(system_info) != hardware_interface::return_type::OK) {
-        return hardware_interface::return_type::ERROR;
+    if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
+        return hardware_interface::CallbackReturn::ERROR;
     }
  
     // battVoltage_.resize(info_.sensors.size(), std::numeric_limits<double>::quiet_NaN());
@@ -98,8 +97,7 @@ hardware_interface::return_type MappingbotHardware::configure(const hardware_int
     // cmd_pub_[1]    = rclcpp::create_publisher<std_msgs::msg::Float64>("hoverboard/right_wheel/cmd", 10);
     // voltage_pub_   = rclcpp::create_publisher<std_msgs::msg::Float64>("hoverboard/battery_voltage", 10);
 
-    status_ = hardware_interface::status::CONFIGURED;
-    return hardware_interface::return_type::OK;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface> MappingbotHardware::export_state_interfaces()
@@ -133,8 +131,9 @@ std::vector<hardware_interface::CommandInterface> MappingbotHardware::export_com
     return command_interfaces;
 }
 
-hardware_interface::return_type MappingbotHardware::start(const rclcpp_lifecycle::State & /*previous_state*/)
+hardware_interface::CallbackReturn MappingbotHardware::on_activate(const rclcpp_lifecycle::State &)
 {
+    RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Hardware activated!");
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware starting ...please wait..");
 
     // for (auto i = 0; i <= hw_start_sec_; i++)
@@ -166,11 +165,12 @@ hardware_interface::return_type MappingbotHardware::start(const rclcpp_lifecycle
     // status_ = hardware_interface::status::STARTED;
 
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware System Successfully started!");
-    return hardware_interface::return_type::OK;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type MappingbotHardware::stop(const rclcpp_lifecycle::State & /*previous_state*/)
+hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(const rclcpp_lifecycle::State &)
 {
+    RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Hardware deactivated!");
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware is stopping ...");
 
     // for (auto i = 0; i <= hw_stop_sec_; i++)
@@ -188,7 +188,7 @@ hardware_interface::return_type MappingbotHardware::stop(const rclcpp_lifecycle:
     // status_ = hardware_interface::status::STOPPED;
 
     RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware stopped");
-    return hardware_interface::return_type::OK;
+    return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & time, const rclcpp::Duration & period)
@@ -196,7 +196,7 @@ hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & ti
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
     // TODO : buat dua sistem, jika pake simulation gazebo dan jika pake robot real
-    if (start() != hardware_interface::return_type::OK) {
+    // if (start() != hardware_interface::return_type::OK) {
         return hardware_interface::return_type::ERROR;
     }
 
@@ -223,7 +223,7 @@ hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & ti
 hardware_interface::return_type MappingbotHardware::write(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
-    if (start() != hardware_interface::return_type::OK) {
+    // if (start() != hardware_interface::return_type::OK) {
         return hardware_interface::return_type::ERROR;
     }
 
