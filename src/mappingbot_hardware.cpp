@@ -167,7 +167,7 @@ hardware_interface::CallbackReturn MappingbotHardware::on_activate(
     }
 
     serial_port_ = std::make_shared<MappingbotSerialPort>();
-    if (serial_port_->open(serial_port_name_) != hardware_interface::return_type::OK) {
+    if (serial_port_->open(serial_port_name_)) {
         RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"),
                     "Mappingbot hardware failed to open serial port");
         return hardware_interface::CallbackReturn::ERROR;
@@ -203,7 +203,7 @@ hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MappingbotHardware::read(
+hardware_interface::return_type MappingbotHardware::read(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 
 {
@@ -213,7 +213,7 @@ hardware_interface::CallbackReturn MappingbotHardware::read(
     if (!serial_port_ || !serial_port_->is_open()) {
         RCLCPP_ERROR(rclcpp::get_logger("MappingbotHardware"),
                      "Serial port not open during read()");
-        return hardware_interface::CallbackReturn::ERROR;
+        return hardware_interface::return_type::ERROR;
     }
 
     serial_port_->read_frames();
@@ -233,10 +233,10 @@ hardware_interface::CallbackReturn MappingbotHardware::read(
     
     // fprintf(stderr, "velL : %f\n", velocity_states_[0]);
     // fprintf(stderr, "velR : %f\n", velocity_states_[1]);
-    return hardware_interface::CallbackReturn::SUCCESS;
+    return hardware_interface::return_type::OK;
 }
 
-hardware_interface::CallbackReturn MappingbotHardware::write(
+hardware_interface::return_type MappingbotHardware::write(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
@@ -244,7 +244,7 @@ hardware_interface::CallbackReturn MappingbotHardware::write(
     if (!serial_port_ || !serial_port_->is_open()) {
         RCLCPP_ERROR(rclcpp::get_logger("MappingbotHardware"),
                      "Serial port not open during write()");
-        return hardware_interface::CallbackReturn::ERROR;
+        return hardware_interface::return_type::ERROR;
     }
 
     // Convert PID outputs in RAD/S to RPM
@@ -271,7 +271,7 @@ hardware_interface::CallbackReturn MappingbotHardware::write(
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Kecepatan Kiri rpm: %f", set_cmd_left);
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Kecepatan Kanan rpm: %f", set_cmd_right);
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Motor successfully written!");
-    return hardware_interface::CallbackReturn::SUCCESS;
+    return hardware_interface::return_type::OK;
 }
 
 void MappingbotHardware::on_encoder_update (int16_t right, int16_t left){
