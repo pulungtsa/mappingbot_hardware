@@ -167,7 +167,7 @@ hardware_interface::CallbackReturn MappingbotHardware::on_activate(
     }
 
     serial_port_ = std::make_shared<MappingbotSerialPort>();
-    if (serial_port_->open(serial_port_name_) != mappingbot_hardware::return_type::OK) {
+    if (serial_port_->open(serial_port_name_) != hardware_interface::return_type::OK) {
         RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"),
                     "Mappingbot hardware failed to open serial port");
         return hardware_interface::CallbackReturn::ERROR;
