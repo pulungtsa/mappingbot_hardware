@@ -19,9 +19,13 @@ PLUGINLIB_EXPORT_CLASS(
 
 using namespace mappingbot_hardware;
 
-hardware_interface::CallbackReturn MappingbotHardware::on_init(const hardware_interface::HardwareInfo & info)
+hardware_interface::CallbackReturn MappingbotHardware::on_init(
+    const hardware_interface::HardwareInfo & info)
 {
-    if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) {
+    if (
+        hardware_interface::SystemInterface::on_init(info) != 
+        hardware_interface::CallbackReturn::SUCCESS) 
+    {
         return hardware_interface::CallbackReturn::ERROR;
     }
  
@@ -49,7 +53,7 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(const hardware_in
     //     }
     // }
 
-    for (hardware_interface::ComponentInfo & joint : info_.joints)
+    for (const hardware_interface::ComponentInfo & joint : info_.joints)
     {
         // DiffBotSystem has exactly two states and one command interface on each joint
         if (joint.parameters["motor_id"].empty()) {
@@ -110,11 +114,13 @@ std::vector<hardware_interface::StateInterface> MappingbotHardware::export_state
     // }
     for (size_t i = 0; i < info_.joints.size(); i++) {
         // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Adding position state interface: %s", info_.joints[i].name.c_str());
-        state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_POSITION, &position_states_[i]));
+        state_interfaces.emplace_back(hardware_interface::StateInterface(
+            info_.joints[i].name, hardware_interface::HW_IF_POSITION, &position_states_[i]));
     }
     for (size_t i = 0; i < info_.joints.size(); i++) {
         // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Adding velocity state interface: %s", info_.joints[i].name.c_str());
-        state_interfaces.emplace_back(hardware_interface::StateInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &velocity_states_[i]));
+        state_interfaces.emplace_back(hardware_interface::StateInterface(
+            info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &velocity_states_[i]));
     }
     return state_interfaces;
 }
@@ -126,12 +132,14 @@ std::vector<hardware_interface::CommandInterface> MappingbotHardware::export_com
     std::vector<hardware_interface::CommandInterface> command_interfaces;
     for (size_t i = 0; i < info_.joints.size(); i++) {
         // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Adding velocity command interface: %s", info_.joints[i].name.c_str());
-        command_interfaces.emplace_back(hardware_interface::CommandInterface(info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &velocity_commands_[i]));
+        command_interfaces.emplace_back(hardware_interface::CommandInterface(
+            info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &velocity_commands_[i]));
     }
     return command_interfaces;
 }
 
-hardware_interface::CallbackReturn MappingbotHardware::on_activate(const rclcpp_lifecycle::State &)
+hardware_interface::CallbackReturn MappingbotHardware::on_activate(
+    const rclcpp_lifecycle::State & /*previous_state*/)
 {
     RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Hardware activated!");
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware starting ...please wait..");
@@ -168,7 +176,8 @@ hardware_interface::CallbackReturn MappingbotHardware::on_activate(const rclcpp_
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(const rclcpp_lifecycle::State &)
+hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(
+    const rclcpp_lifecycle::State & /*previous_state*/)
 {
     RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Hardware deactivated!");
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware is stopping ...");
@@ -191,7 +200,8 @@ hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(const rclcp
     return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & time, const rclcpp::Duration & period)
+hardware_interface::return_type MappingbotHardware::read(
+    const rclcpp::Time & time, const rclcpp::Duration & period)
 
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
@@ -220,7 +230,8 @@ hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & ti
     return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type MappingbotHardware::write(const rclcpp::Time & time, const rclcpp::Duration & period)
+hardware_interface::return_type MappingbotHardware::write(
+    const rclcpp::Time & time, const rclcpp::Duration & period)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
     // if (start() != hardware_interface::return_type::OK) {
