@@ -22,7 +22,7 @@ using namespace mappingbot_hardware;
 hardware_interface::return_type MappingbotHardware::configure(const hardware_interface::HardwareInfo & system_info)
 {
 
-    if (configure_default(system_info) != hardware_interface::return_type::OK) {
+    if (SystemInterface::configure(system_info) != hardware_interface::return_type::OK) {
         return hardware_interface::return_type::ERROR;
     }
  
@@ -133,7 +133,7 @@ std::vector<hardware_interface::CommandInterface> MappingbotHardware::export_com
     return command_interfaces;
 }
 
-hardware_interface::return_type MappingbotHardware::start()
+hardware_interface::return_type MappingbotHardware::start(const rclcpp_lifecycle::State & /*previous_state*/)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware starting ...please wait..");
 
@@ -163,13 +163,13 @@ hardware_interface::return_type MappingbotHardware::start()
         return hardware_interface::return_type::ERROR;
     }
 
-    status_ = hardware_interface::status::STARTED;
+    // status_ = hardware_interface::status::STARTED;
 
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware System Successfully started!");
     return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type MappingbotHardware::stop()
+hardware_interface::return_type MappingbotHardware::stop(const rclcpp_lifecycle::State & /*previous_state*/)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware is stopping ...");
 
@@ -185,13 +185,14 @@ hardware_interface::return_type MappingbotHardware::stop()
         serial_port_.reset();
     }
 
-    status_ = hardware_interface::status::STOPPED;
+    // status_ = hardware_interface::status::STOPPED;
 
     RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware stopped");
     return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type MappingbotHardware::read()
+hardware_interface::return_type MappingbotHardware::read(const rclcpp::Time & time, const rclcpp::Duration & period)
+
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
     // TODO : buat dua sistem, jika pake simulation gazebo dan jika pake robot real
@@ -219,7 +220,7 @@ hardware_interface::return_type MappingbotHardware::read()
     return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type MappingbotHardware::write()
+hardware_interface::return_type MappingbotHardware::write(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
     if (start() != hardware_interface::return_type::OK) {

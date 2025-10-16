@@ -28,24 +28,25 @@ namespace mappingbot_hardware
 
         MAPPINGBOT_HARDWARE_PUBLIC
         virtual hardware_interface::return_type configure(const hardware_interface::HardwareInfo & system_info) override;
-            
+
         MAPPINGBOT_HARDWARE_PUBLIC
         virtual std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-            
+
         MAPPINGBOT_HARDWARE_PUBLIC
         virtual std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-            
+
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type start() override;
-            
+        virtual hardware_interface::return_type start(const rclcpp_lifecycle::State & previous_state) override;
+
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type stop() override;
-            
+        virtual hardware_interface::return_type stop(const rclcpp_lifecycle::State & previous_state) override;
+
+        // Humble requires read/write to accept time and period -> these are the real overrides
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type read() override;
-            
+        virtual hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+
         MAPPINGBOT_HARDWARE_PUBLIC
-        virtual hardware_interface::return_type write() override;
+        virtual hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
     private:
         std::vector<uint8_t> motor_ids_;
