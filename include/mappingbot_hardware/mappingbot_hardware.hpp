@@ -30,7 +30,7 @@ namespace mappingbot_hardware
         virtual hardware_interface::return_type configure(const hardware_interface::HardwareInfo & system_info) override;
             
         MAPPINGBOT_HARDWARE_PUBLIC
-       virtual std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+        virtual std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
             
         MAPPINGBOT_HARDWARE_PUBLIC
         virtual std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
