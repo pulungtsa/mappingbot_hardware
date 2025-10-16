@@ -1,0 +1,9 @@
+<library path="mappingbot_hardware">
+  <class name="mappingbot_hardware/MappingbotHardware"
+         type="mappingbot_hardware::MappingbotHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      hardware interface for MappingBot DiffDrive system 
+    </description>
+  </class>
+</library>
