@@ -23,7 +23,7 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 
-find_package(serial QUIET)
+# find_package(serial QUIET)
 
 add_library(
   ${PROJECT_NAME}
@@ -43,7 +43,7 @@ ament_target_dependencies(
   pluginlib
   rclcpp
   rclcpp_lifecycle
-  serial
+  # serial
 )
 
 pluginlib_export_plugin_description_file(hardware_interface mappingbot_hardware.xml)
@@ -74,7 +74,7 @@ ament_export_dependencies(
   pluginlib
   rclcpp
   rclcpp_lifecycle
-  serial
+  # serial
   # controller_manager
 )
 

@@ -14,7 +14,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <!-- <depend>mappingbot</depend> -->
-  <depend>serial</depend>
+  <!-- <depend>serial</depend> -->
   
 
   <exec_depend>controller_manager</exec_depend>
