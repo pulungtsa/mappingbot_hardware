@@ -56,8 +56,10 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(
     for (const hardware_interface::ComponentInfo & joint : info_.joints)
     {
         // DiffBotSystem has exactly two states and one command interface on each joint
-        if (joint.parameters["motor_id"].empty()) {
-            RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), "Motor id not defined for join %s", joint.name.c_str());
+        auto motor_id_it = joint.parameters.find("motor_id");
+        if (motor_id_it == joint.parameters.end() || motor_id_it->second.empty()) {
+            RCLCPP_FATAL(rclcpp::get_logger("MappingbotHardware"), 
+                        "Motor id not defined for joint %s", joint.name.c_str());
             return hardware_interface::CallbackReturn::ERROR;
         }
         if (joint.command_interfaces.size() != 1) {
@@ -165,8 +167,9 @@ hardware_interface::CallbackReturn MappingbotHardware::on_activate(
     }
 
     serial_port_ = std::make_shared<MappingbotSerialPort>();
-    if (serial_port_->open(serial_port_name_) != CallbackReturn::SUCCESS) {
-        RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Mappingbot hardware failed to open serial port");
+    if (serial_port_->open(serial_port_name_) != hardware_interface::return_type::OK) {
+        RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"),
+                    "Mappingbot hardware failed to open serial port");
         return hardware_interface::CallbackReturn::ERROR;
     }
 
@@ -207,8 +210,11 @@ hardware_interface::CallbackReturn MappingbotHardware::read(
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
     // TODO : buat dua sistem, jika pake simulation gazebo dan jika pake robot real
     // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
-        // return hardware_interface::CallbackReturn::ERROR;
-    
+    if (!serial_port_ || !serial_port_->is_open()) {
+        RCLCPP_ERROR(rclcpp::get_logger("MappingbotHardware"),
+                     "Serial port not open during read()");
+        return hardware_interface::CallbackReturn::ERROR;
+    }
 
     serial_port_->read_frames();
 
@@ -235,6 +241,9 @@ hardware_interface::CallbackReturn MappingbotHardware::write(
 {
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
     // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
+    if (!serial_port_ || !serial_port_->is_open()) {
+        RCLCPP_ERROR(rclcpp::get_logger("MappingbotHardware"),
+                     "Serial port not open during write()");
         return hardware_interface::CallbackReturn::ERROR;
     }
 
