@@ -205,8 +205,10 @@ hardware_interface::CallbackReturn MappingbotHardware::on_deactivate(
 
 hardware_interface::return_type MappingbotHardware::read(
     const rclcpp::Time & time, const rclcpp::Duration & period)
-
 {
+    (void)time;
+    (void)period;
+
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Reading...");
     // TODO : buat dua sistem, jika pake simulation gazebo dan jika pake robot real
     // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
@@ -239,6 +241,9 @@ hardware_interface::return_type MappingbotHardware::read(
 hardware_interface::return_type MappingbotHardware::write(
     const rclcpp::Time & time, const rclcpp::Duration & period)
 {
+    (void)time;
+    (void)period;
+
     // RCLCPP_INFO(rclcpp::get_logger("MappingbotHardware"), "Writing...");   
     // if (start() != hardware_interface::CallbackReturn::SUCCESS) {
     if (!serial_port_ || !serial_port_->is_open()) {
