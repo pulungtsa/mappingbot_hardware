@@ -1,5 +1,4 @@
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
-#include <pluginlib/class_list_macros.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <vector>
 #include <string>
@@ -10,12 +9,7 @@
 
 
 #include "mappingbot_hardware/mappingbot_hardware.hpp"
-#include "mappingbot_hardware/mappingbot_config.h"
-
-PLUGINLIB_EXPORT_CLASS(
-    mappingbot_hardware::MappingbotHardware,
-    hardware_interface::SystemInterface
-)   
+#include "mappingbot_hardware/mappingbot_config.h"  
 
 using namespace mappingbot_hardware;
 
@@ -28,12 +22,12 @@ hardware_interface::CallbackReturn MappingbotHardware::on_init(
     {
         return hardware_interface::CallbackReturn::ERROR;
     }
- 
+
     // battVoltage_.resize(info_.sensors.size(), std::numeric_limits<double>::quiet_NaN());
     // board_temperatures_.resize(info_.sensors.size(), std::numeric_limits<double>::quiet_NaN());
     // cfg_.device = info_.hardware_parameters["serial_port_device"];
     // cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
-    serial_port_name_ = info_.hardware_parameters["serial_port"];
+    serial_port_name_ = info_.hardware_parameters.at("serial_port");
     motor_ids_.resize(info_.joints.size());
     position_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
     velocity_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
@@ -327,5 +321,11 @@ void MappingbotHardware::on_encoder_update (int16_t right, int16_t left){
     // Convert position in accumulated ticks to position in radians
     position_states_[1] = 2.0*M_PI * lastPubPosL / (double)TICKS_PER_ROTATION;
     position_states_[0] = 2.0*M_PI * lastPubPosR / (double)TICKS_PER_ROTATION;
-}
 
+} //namespace mappingbot_hardware
+
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(
+    mappingbot_hardware::MappingbotHardware,
+    hardware_interface::SystemInterface
+) 
